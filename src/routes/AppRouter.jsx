@@ -1,9 +1,14 @@
-import React from 'react'
-import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 import UserLayout from '../Layout/UserLayout'
+import { lazy, Suspense } from 'react'
+
+const Login = lazy(() => import('../pages/LoginPage'))
+const Home = lazy(() => import('../pages/HomePage'))
+const Friends = lazy(() => import('../pages/FriendPage'))
+const ProfilePage = lazy(() => import('../pages/ProfilePage'))
 
 const guestRouter = createBrowserRouter([
-    { path: "/", element: <p>Login</p> },
+    { path: "/", element: <Login /> },
     { path: "*", element: <Navigate to='/' /> }
 ])
 
@@ -11,19 +16,22 @@ const userRouter = createBrowserRouter([
     {
         path: "/", element: <UserLayout />,
         children: [
-            { path: '', element: <p>Home Page</p> },
-            { path: "friends", element: <p>Friends page</p> },
-            { path: 'profile', element: <p>Profile Page</p> },
+            { path: '', element: <Home /> },
+            { path: "friends", element: <Friends /> },
+            { path: 'profile', element: <ProfilePage /> },
             { path: "*", element: <Navigate to='/' /> }
         ]
     },
 ])
 
 function AppRouter() {
-    const user = { username: 'andy' }
+    // const user = { username: 'andy' }
+    const user = null
     const finalRouter = user ? userRouter : guestRouter
     return (
-        <RouterProvider router={finalRouter} />
+        <Suspense fallback={<div>Loading...</div>}>
+            <RouterProvider router={finalRouter} />
+        </Suspense>
     )
 }
 
